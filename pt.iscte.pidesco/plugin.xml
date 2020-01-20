@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="view" name="Pidesco View" schema="schema/pt.iscte.pidesco.view.exsd"/>
+   <extension-point id="tool" name="Pidesco tool" schema="schema/pt.iscte.pidesco.tool.exsd"/>
+
+   <extension
+         id="app"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            visible="true">
+         <run
+               class="pt.iscte.pidesco.internal.Application">
+         </run>
+      </application>
+   </extension>
+   <extension
+         id="perspective"
+         name="ISCDE Perspective"
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="pt.iscte.pidesco.internal.Perspective"
+            fixed="false"
+            id="pt.iscte.pidesco.perspective"
+            name="Pidesco">
+      </perspective>
+    
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            class="pt.iscte.pidesco.internal.AbstractPidescoView"
+            id="pt.iscte.pidesco.view"
+            name="Pidesco View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         id="ide"
+         name="PIDESCO"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="pt.iscte.pidesco.app"
+            description="Pedagogical IDE for Software COmponents"
+            name="Pidesco">
+         <property
+               name="appName"
+               value="PIDESCO">
+         </property>
+         <property
+               name="aboutText"
+               value="Pedagogical IDE for Software COmponents (ISCTE-IUL)">
+         </property>
+         <property
+               name="aboutImage"
+               value="iscde.png">
+         </property>
+      </product>
+   </extension>
+
+</plugin>
