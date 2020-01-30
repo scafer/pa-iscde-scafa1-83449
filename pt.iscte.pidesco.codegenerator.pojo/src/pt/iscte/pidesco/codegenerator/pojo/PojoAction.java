@@ -21,11 +21,11 @@ public class PojoAction implements CodeGeneratorAction {
 	String serializationMode;
 
 	@Override
-	public void run(Composite area) {
-		new Label(area,SWT.NONE).setText("Pojo Generator:");;
+	public void run(Composite viewArea) {
+		new Label(viewArea,SWT.NONE).setText("Pojo Generator:");;
 		
 		//Options Group		
-		Group optionsGroup = new Group(area, SWT.NONE);
+		Group optionsGroup = new Group(viewArea, SWT.NONE);
 		optionsGroup.setLayout(new RowLayout(SWT.VERTICAL));
 		
 		new Label(optionsGroup, SWT.NONE).setText("JSON libraries:");
@@ -57,7 +57,7 @@ public class PojoAction implements CodeGeneratorAction {
         });
 		
 		//Properties Group
-		Group propertiesGroup = new Group(area, SWT.NONE);
+		Group propertiesGroup = new Group(viewArea, SWT.NONE);
 		propertiesGroup.setLayout(new RowLayout(SWT.VERTICAL));
 		
 		new Label(propertiesGroup, SWT.NONE).setText("Class Name:");

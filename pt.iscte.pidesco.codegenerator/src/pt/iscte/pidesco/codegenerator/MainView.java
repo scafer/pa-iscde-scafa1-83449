@@ -14,6 +14,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -37,26 +39,24 @@ public class MainView implements PidescoView {
 	
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
-		viewArea.setLayout(new RowLayout(SWT.VERTICAL));
+		
+		GridLayout layout = new GridLayout(1, true);
+		viewArea.setLayout(layout);
 		
 		fileEditorListener = new FileEditorListener();
 		JavaEditorServices javaEditorServices = Activator.getInstance().getJavaEditorServices();
 		javaEditorServices.addListener(fileEditorListener);
 	
+		new Label(viewArea, SWT.NONE).setText("Code Generator:");
+		
 		//Options Group		
 		Group optionsGroup = new Group(viewArea, SWT.NONE);
 		optionsGroup.setLayout(new RowLayout(SWT.VERTICAL));
 		
-		Button buttonFromFile = new Button(optionsGroup, SWT.RADIO);
-		buttonFromFile.setText("Get code from opened file");
-		Button buttonFromText = new Button(optionsGroup, SWT.RADIO);
-		buttonFromText.setText("Get code from text box");
-		
-		//Code Block GUI
-		new Label(viewArea, SWT.PUSH).setText("Code Block:");
-		textInput = new Text(viewArea, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		Button buttonContentFromText = new Button(optionsGroup, SWT.RADIO);
+		buttonContentFromText.setText("Get code from text box");
 
-		buttonFromText.addSelectionListener(new SelectionAdapter()  {
+		buttonContentFromText.addSelectionListener(new SelectionAdapter()  {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 Button source = (Button) e.getSource();
@@ -66,7 +66,10 @@ public class MainView implements PidescoView {
             }
         });
 		
-		buttonFromFile.addSelectionListener(new SelectionAdapter()  {
+		Button buttonContentFromFile = new Button(optionsGroup, SWT.RADIO);
+		buttonContentFromFile.setText("Get code from opened file");
+		
+		buttonContentFromFile.addSelectionListener(new SelectionAdapter()  {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 Button source = (Button) e.getSource();
@@ -76,6 +79,12 @@ public class MainView implements PidescoView {
             }
         });
 		
+		//Code Block GUI
+		new Label(viewArea, SWT.PUSH).setText("Code Block:");
+		GridData codeBlockData = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		textInput = new Text(viewArea, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		textInput.setLayoutData(codeBlockData);
+				
 		ExtensionRegistry(viewArea);
 	}
 	
@@ -86,15 +95,16 @@ public class MainView implements PidescoView {
 			String name = e.getAttribute("name");
 			System.out.println(name);
 			
-			new Label(viewArea, SWT.NONE).setText(name);
+			new Label(viewArea, SWT.TOP).setText(name);
 			try {
 				CodeGeneratorAction action = (CodeGeneratorAction) e.createExecutableExtension("class");
 				action.run(viewArea);
 				viewArea.layout();
 				
-				Button b1 = new Button(viewArea, SWT.PUSH);
-				b1.setText("Generate Code");
-				b1.addSelectionListener(new SelectionAdapter() {
+				Button generateCode = new Button(viewArea, SWT.PUSH);
+				generateCode.setText("Generate Code");
+				
+				generateCode.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						String resultContent = action.generateFileContent(getContent());
@@ -105,6 +115,7 @@ public class MainView implements PidescoView {
 							else {
 								FileHandler fileHandler = new FileHandler();
 								fileHandler.saveOrUpdateFile(new File(fileEditorListener.getFile().getAbsolutePath()), resultContent);
+								JOptionPane.showMessageDialog(null, "Successfully generated, refresh the document.");
 							}
 						}
 						else

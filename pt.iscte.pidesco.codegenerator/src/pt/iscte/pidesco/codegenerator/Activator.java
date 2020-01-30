@@ -2,14 +2,11 @@ package pt.iscte.pidesco.codegenerator;
 
 import java.util.Set;
 
-import org.eclipse.core.runtime.Assert;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import pt.iscte.pidesco.codegenerator.service.CodeGeneratorListener;
-import pt.iscte.pidesco.codegenerator.service.CodeGeneratorServices;
-import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 
 public class Activator implements BundleActivator {
@@ -17,9 +14,6 @@ public class Activator implements BundleActivator {
 	private static BundleContext context;
 	private static Activator instance;
 	private JavaEditorServices javaEditorServices;
-	
-	private CodeGeneratorServices codeGeneratorServices;
-	private CodeGeneratorListener codeGeneratorListener;
 	private Set<CodeGeneratorListener> listeners;
 
 	static BundleContext getContext() {
