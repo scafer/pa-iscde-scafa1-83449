@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="pt.iscte.pidesco.codegenerator.actions">
+      <item
+            class="pt.iscte.pidesco.codegenerator.pojo.PojoAction"
+            name="Pojo Action">
+      </item>
+   </extension>
+
+</plugin>

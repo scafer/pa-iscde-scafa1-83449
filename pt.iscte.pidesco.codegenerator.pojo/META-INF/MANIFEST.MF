@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Pojo
+Bundle-SymbolicName: pt.iscte.pidesco.codegenerator.pojo;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: pt.iscte.pidesco.codegenerator.pojo.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.swt;bundle-version="3.112.0",
+ pt.iscte.pidesco.codegenerator;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: pt.iscte.pidesco.codegenerator.pojo
+Bundle-ActivationPolicy: lazy
+Import-Package: org.apache.log4j
