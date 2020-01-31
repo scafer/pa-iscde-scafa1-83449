@@ -22,8 +22,6 @@ public class PojoAction implements CodeGeneratorAction {
 
 	@Override
 	public void run(Composite viewArea) {
-		new Label(viewArea,SWT.NONE).setText("Pojo Generator:");;
-		
 		//Options Group		
 		Group optionsGroup = new Group(viewArea, SWT.NONE);
 		optionsGroup.setLayout(new RowLayout(SWT.VERTICAL));

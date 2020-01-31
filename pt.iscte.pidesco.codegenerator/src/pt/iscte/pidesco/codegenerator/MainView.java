@@ -1,5 +1,9 @@
 package pt.iscte.pidesco.codegenerator;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.util.Map;
 
@@ -13,6 +17,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,6 +40,7 @@ public class MainView implements PidescoView {
 	Boolean isFromFile;
 	static MainView instance;
 	FileEditorListener fileEditorListener;
+	String saveTo = null;
 
 	public static MainView getInstance() { return instance; }
 	
@@ -47,14 +54,16 @@ public class MainView implements PidescoView {
 		JavaEditorServices javaEditorServices = Activator.getInstance().getJavaEditorServices();
 		javaEditorServices.addListener(fileEditorListener);
 	
-		new Label(viewArea, SWT.NONE).setText("Code Generator:");
+		Label title = new Label(viewArea, SWT.NONE);
+		title.setText("Code Generator");
+		title.setFont(new Font(title.getDisplay(), new FontData("Arial", 12, SWT.BOLD)));
 		
 		//Options Group		
 		Group optionsGroup = new Group(viewArea, SWT.NONE);
 		optionsGroup.setLayout(new RowLayout(SWT.VERTICAL));
 		
 		Button buttonContentFromText = new Button(optionsGroup, SWT.RADIO);
-		buttonContentFromText.setText("Get code from text box");
+		buttonContentFromText.setText("Get code from code block");
 
 		buttonContentFromText.addSelectionListener(new SelectionAdapter()  {
             @Override
@@ -79,6 +88,36 @@ public class MainView implements PidescoView {
             }
         });
 		
+		//Save Options Group
+		Group saveOptionsGroup = new Group(viewArea, SWT.NONE);
+		saveOptionsGroup.setLayout(new RowLayout(SWT.VERTICAL));
+				
+		Button buttonSaveToFile = new Button(saveOptionsGroup, SWT.RADIO);
+		buttonSaveToFile.setText("Save to opened file");
+		
+		Button buttonSaveToClipboard = new Button(saveOptionsGroup, SWT.RADIO);
+		buttonSaveToClipboard.setText("Copy to clipboard");
+		
+		buttonSaveToFile.addSelectionListener(new SelectionAdapter()  {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                Button source = (Button) e.getSource();
+                if(source.getSelection())  {
+                	saveTo = "file";
+                }
+            }
+        });
+		
+		buttonSaveToClipboard.addSelectionListener(new SelectionAdapter()  {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                Button source = (Button) e.getSource();
+                if(source.getSelection())  {
+                	saveTo = "clipboard";
+                }
+            }
+        });
+		
 		//Code Block GUI
 		new Label(viewArea, SWT.PUSH).setText("Code Block:");
 		GridData codeBlockData = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
@@ -92,10 +131,13 @@ public class MainView implements PidescoView {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = reg.getConfigurationElementsFor("pt.iscte.pidesco.codegenerator.actions");
 		for(IConfigurationElement e : elements) {
-			String name = e.getAttribute("name");
-			System.out.println(name);
+			String extensionName = e.getAttribute("name");
+			System.out.println(extensionName);
 			
-			new Label(viewArea, SWT.TOP).setText(name);
+			Label name = new Label(viewArea, SWT.TOP);
+			name.setText(extensionName);
+			name.setFont(new Font(name.getDisplay(), new FontData("Arial", 10, SWT.BOLD)));
+			
 			try {
 				CodeGeneratorAction action = (CodeGeneratorAction) e.createExecutableExtension("class");
 				action.run(viewArea);
@@ -113,9 +155,21 @@ public class MainView implements PidescoView {
 								JOptionPane.showMessageDialog(null, "File path is empty. Open a new file.");
 							}
 							else {
-								FileHandler fileHandler = new FileHandler();
-								fileHandler.saveOrUpdateFile(new File(fileEditorListener.getFile().getAbsolutePath()), resultContent);
-								JOptionPane.showMessageDialog(null, "Successfully generated, refresh the document.");
+								if(saveTo == "file") {
+									FileHandler fileHandler = new FileHandler();
+									fileHandler.saveOrUpdateFile(new File(fileEditorListener.getFile().getAbsolutePath()), resultContent);
+									JOptionPane.showMessageDialog(null, "Successfully generated, refresh the document.");
+								}
+								
+								else if(saveTo == "clipboard") {
+									Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+									Transferable transferable = new StringSelection(resultContent);
+									clipboard.setContents(transferable, null);
+									JOptionPane.showMessageDialog(null, "Saved to Clipboard");
+								}
+								else {
+									JOptionPane.showMessageDialog(null, "Select one of the save options.");
+								}
 							}
 						}
 						else
@@ -135,11 +189,11 @@ public class MainView implements PidescoView {
 		if(isFromFile) {
 			FileHandler fileHandler = new FileHandler();
         	result = fileHandler.readFileLines(fileEditorListener.getFile().getAbsolutePath());
+        	System.out.println(result);
 		}
 		else {
 			result = textInput.getText();
 		}
-
 		return result;
 	}
 }

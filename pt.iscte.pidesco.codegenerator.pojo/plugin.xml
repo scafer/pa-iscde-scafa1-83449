@@ -5,7 +5,7 @@
          point="pt.iscte.pidesco.codegenerator.actions">
       <item
             class="pt.iscte.pidesco.codegenerator.pojo.PojoAction"
-            name="Pojo Action">
+            name="Pojo Generator">
       </item>
    </extension>
 
